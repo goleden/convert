@@ -3,7 +3,6 @@
     "description": "convert",
     "type": "library",
     "license": "MIT",
-    "minimum-stability": "dev",
     "require": {
         "h4cc/wkhtmltopdf-amd64": "0.12.x",
         "symfony/process": "^4.3",
