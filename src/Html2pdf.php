@@ -28,9 +28,9 @@ class Html2pdf
     {
         $isWin = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? true : false;
         if ($isWin) {
-            $bin = realpath('../vendor/wemersonjanuario/wkhtmltopdf-windows/bin/wkhtmltopdf64.exe');
+            $bin = realpath('../../../wemersonjanuario/wkhtmltopdf-windows/bin/wkhtmltopdf64.exe');
         } else {
-            $bin = realpath('../vendor/h4cc/wkhtmltopdf-amd64/bin/wkhtmltopdf-amd64');
+            $bin = realpath('../../../h4cc/wkhtmltopdf-amd64/bin/wkhtmltopdf-amd64');
         }
         if (!is_file($bin)) {
             throw new \Exception('file is not exists!');
