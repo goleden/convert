@@ -33,7 +33,7 @@ class Html2pdf
             $bin = realpath('../vendor/h4cc/wkhtmltopdf-amd64/bin/wkhtmltopdf-amd64');
         }
         if (!is_file($bin)) {
-            \Exception('file is not exists!');
+            throw new \Exception('file is not exists!');
         }
         $snappy = new Pdf($bin);
         return $snappy->generateFromHtml($html, $pdfPath);
