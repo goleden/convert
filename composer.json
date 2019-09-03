@@ -4,10 +4,8 @@
     "type": "library",
     "license": "MIT",
     "require": {
-        "h4cc/wkhtmltopdf-amd64": "0.12.x",
         "symfony/process": "^4.3",
-        "knplabs/knp-snappy": "^1.1",
-        "wemersonjanuario/wkhtmltopdf-windows": "^0.12"
+        "knplabs/knp-snappy": "^1.1"
     },
     "autoload":{
         "psr-4": {

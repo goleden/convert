@@ -16,6 +16,15 @@ use Knp\Snappy\Pdf;
  */
 class Html2pdf
 {
+    private $binary = 'wkhtmltopdf';
+
+    /**
+     * Construct
+     */
+    public function __construct($binary = 'wkhtmltopdf')
+    {
+        $this->binary = $binary;
+    }
     /**
      * Wkhtmltopdf
      *
@@ -26,16 +35,7 @@ class Html2pdf
      */
     public function convert($html, $pdfPath)
     {
-        $isWin = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? true : false;
-        if ($isWin) {
-            $bin = realpath('../../../wemersonjanuario/wkhtmltopdf-windows/bin/wkhtmltopdf64.exe');
-        } else {
-            $bin = realpath('../../../h4cc/wkhtmltopdf-amd64/bin/wkhtmltopdf-amd64');
-        }
-        if (!is_file($bin)) {
-            throw new \Exception('file is not exists!');
-        }
-        $snappy = new Pdf($bin);
+        $snappy = new Pdf($this->binary);
         return $snappy->generateFromHtml($html, $pdfPath);
     }
 }
