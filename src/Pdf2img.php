@@ -42,7 +42,7 @@ class Pdf2img
         }
         foreach ($im as $key => $var) {
             $var->setImageFormat($format);
-            $filename = rtrim($dir, '/'). '/'. $key. '.'. $format;
+            $filename = rtrim($dir, '/'). '/'. uniqid(). rand(1000, 9999). '.'. $format;
             if ($var->writeImage($filename) != true) {
                 throw new \Exception('Write image fail!');
             }
