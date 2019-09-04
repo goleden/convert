@@ -33,7 +33,7 @@ class Pdf2img
         if (!is_file($pdf)) {
             throw new \Exception('Pdf not found!');
         }
-        $im = new Imagick();
+        $im = new \Imagick();
         $im->setResolution($resoulution, $resoulution);
         $im->setCompressionQuality($compression);
         $im->readImage($pdf);
