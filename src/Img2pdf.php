@@ -30,7 +30,7 @@ class Img2pdf
         if (is_file($pdf)) {
             unlink($pdf);
         }
-        $anim = new Imagick($images);
+        $anim = new \Imagick($images);
         $result = $anim->writeImages($pdf, true);
         if ($result != true) {
             throw new \Exception('Convert fail!');
