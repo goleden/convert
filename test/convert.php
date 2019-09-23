@@ -1,6 +1,6 @@
 <?php
 
-require '../../../vendor/autoload.php';
+require '../../../../vendor/autoload.php';
 
 use convert\Html2pdf;
 use convert\Word2html;
@@ -15,7 +15,7 @@ try {
 
 try {
     $html2pdf = new Word2html();
-    $html2pdf->convert('./page50x.docx', './html/');
+    $html2pdf->convert('./1.doc', './html/');
     echo 'success';
 } catch (\Exception $e) {
     echo ($e->getMessage());

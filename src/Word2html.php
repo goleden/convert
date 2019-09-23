@@ -65,28 +65,54 @@ class Word2html
 
         $this->htmlFile = $this->htmlPath. '/'. pathinfo($word, PATHINFO_FILENAME). '.html';
 
-        $this->htmlContentImgToBase64();
+        $this->parseHtmlContent();
 
         return $this->htmlFile;
     }
 
     /**
-     * 内容图片转base64
+     * 格式化内容
      */
-    protected function htmlContentImgToBase64()
+    protected function parseHtmlContent()
     {
         $image = [];
         $htmlContent = file_get_contents($this->htmlFile);
+        // 内容图片转base64
         preg_match_all('/(<img.*?src=")(.*?)(".*?>)/is', $htmlContent, $imgFiles);
-
         if (!empty($imgFiles[0])) {
-            $base64 = $this->imgToBase64($this->htmlPath. '/'. $imgFiles[2][$key]);
             $replace = [];
             foreach ($imgFiles[0] as $key => $imgHtml) {
-                $replace[] = $imgFiles[1][$key]. $base64. $imgFiles[3][$key];
+                $imgFile = $this->htmlPath. '/'. $imgFiles[2][$key];
+                $replace[] = $imgFiles[1][$key]. $this->imgToBase64($imgFile). $imgFiles[3][$key];
             }
             $htmlContent = str_replace($imgFiles[0], $replace, $htmlContent);
-            file_put_contents($htmlFile, $htmlContent);
+        }
+        // 删除文件夹
+        $this->delDir($this->htmlPath);
+        $this->htmlFile = $this->htmlPath. '.html';
+        file_put_contents($this->htmlFile, $htmlContent);
+    }
+
+    protected function delDir($dir)
+    {
+        //先删除目录下的文件：
+        $dh = opendir($dir);
+        while ($file = readdir($dh)) {
+            if ($file != "." && $file != "..") {
+                $fullpath = $dir. "/". $file;
+                if (!is_dir($fullpath)) {
+                    unlink($fullpath);
+                } else {
+                    $this->delDir($fullpath);
+                }
+            }
+        }
+        closedir($dh);
+        //删除当前文件夹：
+        if (rmdir($dir)) {
+            return true;
+        } else {
+            return false;
         }
     }
 
