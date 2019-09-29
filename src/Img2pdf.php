@@ -6,7 +6,7 @@
  *
  */
 
-namespace convert;
+namespace goleden\convert;
 
 /**
  * Img2pdf

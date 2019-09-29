@@ -2,8 +2,8 @@
 
 require '../../../../vendor/autoload.php';
 
-use convert\Html2pdf;
-use convert\Word2html;
+use goleden\convert\Html2pdf;
+use goleden\convert\Word2html;
 
 try {
     $html2pdf = new Html2pdf();

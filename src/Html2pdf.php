@@ -6,7 +6,7 @@
  *
  */
 
-namespace convert;
+namespace goleden\convert;
 
 use Knp\Snappy\Pdf;
 

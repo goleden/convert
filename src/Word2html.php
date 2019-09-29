@@ -6,7 +6,7 @@
  *
  */
 
-namespace convert;
+namespace goleden\convert;
 
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
@@ -34,10 +34,11 @@ class Word2html
      *
      * @param string $word     html代码块
      * @param string $htmlPath pdf生成路径
+     * @param int    $timeout  执行超时时间，单位秒
      *
      * @return string|Exception
      */
-    public function convert($word, $htmlPath)
+    public function convert($word, $htmlPath, $timeout = 30)
     {
         $this->htmlPath = rtrim($htmlPath, '/'). '/'. uniqid();
         if (!is_dir($this->htmlPath)) {
@@ -55,7 +56,7 @@ class Word2html
                 realpath($word)
             ]
         );
-        $process->setTimeout(10);
+        $process->setTimeout($timeout);
         $process->run();
 
         // executes after the command finishes

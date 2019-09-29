@@ -9,7 +9,7 @@
     },
     "autoload":{
         "psr-4": {
-            "convert\\": "src/"
+            "goleden\\convert\\": "src/"
         }
     }
 }
