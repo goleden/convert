@@ -18,5 +18,5 @@ try {
     $html2pdf->convert('./1.doc', './html/');
     echo 'success';
 } catch (\Exception $e) {
-    echo ($e->getMessage());
+    echo ('Word2html:' . $e->getMessage());
 }
