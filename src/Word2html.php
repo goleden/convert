@@ -117,8 +117,8 @@ class Word2html
             $replace = [];
             foreach ($imgFiles[0] as $key => $imgHtml) {
                 $imgFile = $this->htmlPath . '/' . $imgFiles[2][$key];
-                if (isset($this->options['uploadCallback'])) {
-                    $src = $this->call($this->options['uploadCallback'], [realpath($imgFile)]);
+                if (isset($this->options['imageCallback'])) {
+                    $src = $this->call($this->options['imageCallback'], [realpath($imgFile)]);
                 } else {
                     $src = $this->imgToBase64($imgFile);
                 }

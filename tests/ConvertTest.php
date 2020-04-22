@@ -21,7 +21,7 @@ class ConvertTest extends TestCase
     public function testWord2html()
     {
         $html2pdf = new Word2html();
-        $file = $html2pdf->convert(dirname(__DIR__) . '/examples/1.doc', dirname(__DIR__) . '/examples/html/', 30, ['uploadCallback' => function ($data) {
+        $file = $html2pdf->convert(dirname(__DIR__) . '/examples/1.doc', dirname(__DIR__) . '/examples/html/', 30, ['imageCallback' => function ($data) {
             return $data;
         }]);
         $this->assertEquals(true, !empty($file));
