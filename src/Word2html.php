@@ -17,9 +17,19 @@ use Symfony\Component\Process\Process;
  */
 class Word2html
 {
-
     private $binary = 'soffice';
     private $htmlFile = '';
+    /**
+     * 可选项
+     * [
+     *     'uploadCallback' => function () {} // 匿名函数，自定义上传
+     * ]
+     *
+     * @var [type]
+     * @author guoruidian
+     * @date 2020-04-22
+     */
+    protected $options;
 
     /**
      * Construct
@@ -38,9 +48,10 @@ class Word2html
      *
      * @return string|Exception
      */
-    public function convert($word, $htmlPath, $timeout = 30)
+    public function convert($word, $htmlPath, $timeout = 30, $options = [])
     {
-        $this->htmlPath = rtrim($htmlPath, '/'). '/'. uniqid();
+        $this->options = $options;
+        $this->htmlPath = rtrim($htmlPath, '/') . '/' . uniqid();
         if (!is_dir($this->htmlPath)) {
             mkdir($this->htmlPath, 0777, true);
         }
@@ -64,13 +75,35 @@ class Word2html
             throw new ProcessFailedException($process);
         }
 
-        $this->htmlFile = $this->htmlPath. '/'. pathinfo($word, PATHINFO_FILENAME). '.html';
+        $this->htmlFile = $this->htmlPath . '/' . pathinfo($word, PATHINFO_FILENAME) . '.html';
 
         $this->parseHtmlContent();
 
         return $this->htmlFile;
     }
 
+    /**
+     * Call a callback with the arguments.
+     *
+     * @param mixed $callback
+     * @return null|mixed
+     */
+    private function call($callback, array $args = [])
+    {
+        $result = null;
+        if ($callback instanceof \Closure) {
+            $result = $callback(...$args);
+        } elseif (is_object($callback) || (is_string($callback) && function_exists($callback))) {
+            $result = $callback(...$args);
+        } elseif (is_array($callback)) {
+            [$object, $method] = $callback;
+            $result = is_object($object) ? $object->{$method}(...$args) : $object::$method(...$args);
+        } else {
+            $result = call_user_func_array($callback, $args);
+        }
+        return $result;
+    }
+    
     /**
      * 格式化内容
      */
@@ -83,14 +116,19 @@ class Word2html
         if (!empty($imgFiles[0])) {
             $replace = [];
             foreach ($imgFiles[0] as $key => $imgHtml) {
-                $imgFile = $this->htmlPath. '/'. $imgFiles[2][$key];
-                $replace[] = $imgFiles[1][$key]. $this->imgToBase64($imgFile). $imgFiles[3][$key];
+                $imgFile = $this->htmlPath . '/' . $imgFiles[2][$key];
+                if (isset($this->options['uploadCallback'])) {
+                    $src = $this->call($this->options['uploadCallback'], [realpath($imgFile)]);
+                } else {
+                    $src = $this->imgToBase64($imgFile);
+                }
+                $replace[] = $imgFiles[1][$key] . $src . $imgFiles[3][$key];
             }
             $htmlContent = str_replace($imgFiles[0], $replace, $htmlContent);
         }
         // 删除文件夹
         $this->delDir($this->htmlPath);
-        $this->htmlFile = $this->htmlPath. '.html';
+        $this->htmlFile = $this->htmlPath . '.html';
         file_put_contents($this->htmlFile, $htmlContent);
     }
 
@@ -100,7 +138,7 @@ class Word2html
         $dh = opendir($dir);
         while ($file = readdir($dh)) {
             if ($file != "." && $file != "..") {
-                $fullpath = $dir. "/". $file;
+                $fullpath = $dir . "/" . $file;
                 if (!is_dir($fullpath)) {
                     unlink($fullpath);
                 } else {
@@ -141,7 +179,7 @@ class Word2html
                     break;
             }
             // 合成图片的base64编码
-            $base64 = 'data:image/'. $imgType. ';base64,'. $file_content;
+            $base64 = 'data:image/' . $imgType . ';base64,' . $file_content;
         }
     
         return $base64;
