@@ -22,12 +22,12 @@ class Word2html
     /**
      * 可选项
      * [
-     *     'uploadCallback' => function () {} // 匿名函数，自定义上传
+     *     'imageCallback' => function ($imageFile) {} // 匿名函数，自定义上传
+     *     'contentCallback' => function (word\ParseContent $parseContent) {} // 匿名函数，格式化内容
      * ]
      *
      * @var [type]
      * @author guoruidian
-     * @date 2020-04-22
      */
     protected $options;
 
@@ -83,57 +83,39 @@ class Word2html
     }
 
     /**
-     * Call a callback with the arguments.
-     *
-     * @param mixed $callback
-     * @return null|mixed
-     */
-    private function call($callback, array $args = [])
-    {
-        $result = null;
-        if ($callback instanceof \Closure) {
-            $result = $callback(...$args);
-        } elseif (is_object($callback) || (is_string($callback) && function_exists($callback))) {
-            $result = $callback(...$args);
-        } elseif (is_array($callback)) {
-            [$object, $method] = $callback;
-            $result = is_object($object) ? $object->{$method}(...$args) : $object::$method(...$args);
-        } else {
-            $result = call_user_func_array($callback, $args);
-        }
-        return $result;
-    }
-    
-    /**
      * 格式化内容
      */
     protected function parseHtmlContent()
     {
         $image = [];
         $htmlContent = file_get_contents($this->htmlFile);
-        // 内容图片转base64
-        preg_match_all('/(<img.*?src=")(.*?)(".*?>)/is', $htmlContent, $imgFiles);
-        if (!empty($imgFiles[0])) {
-            $replace = [];
-            foreach ($imgFiles[0] as $key => $imgHtml) {
-                $imgFile = $this->htmlPath . '/' . $imgFiles[2][$key];
-                if (isset($this->options['imageCallback'])) {
-                    $src = $this->call($this->options['imageCallback'], [realpath($imgFile)]);
-                } else {
-                    $src = $this->imgToBase64($imgFile);
-                }
-                $replace[] = $imgFiles[1][$key] . $src . $imgFiles[3][$key];
-            }
-            $htmlContent = str_replace($imgFiles[0], $replace, $htmlContent);
+    
+        $content = new word\Content($htmlContent);
+        $htmlContent = $content->getContent();
+
+        $image = new word\Image($content);
+        $image->callback = $this->options['imageCallback'] ?? null;
+        $image->htmlPath = $this->htmlPath;
+        $htmlContent = $image->getContent();
+
+        if (isset($this->options['contentCallback'])) {
+            $diy = new word\Diy($image);
+            $diy->callback = $this->options['contentCallback'];
+            $htmlContent = $diy->getContent();
         }
-        // 删除文件夹
+
         $this->delDir($this->htmlPath);
+
         $this->htmlFile = $this->htmlPath . '.html';
         file_put_contents($this->htmlFile, $htmlContent);
     }
-
+      
     protected function delDir($dir)
     {
+        if (!file_exists($dir)) {
+            return true;
+        }
+        // echo $dir;
         //先删除目录下的文件：
         $dh = opendir($dir);
         while ($file = readdir($dh)) {
@@ -153,35 +135,5 @@ class Word2html
         } else {
             return false;
         }
-    }
-
-    protected function imgToBase64($imgFile)
-    {
-        //返回图片的base64
-        $base64 = '';
-        if (file_exists($imgFile)) {
-            $imgInfo = getimagesize($imgFile); // 取得图片的大小，类型等
-            $content = file_get_contents($imgFile);
-            $file_content = chunk_split(base64_encode($content)); // base64编码
-            // 判读图片类型
-            switch ($imgInfo[2]) {
-                case 1:
-                    $imgType = "gif";
-                    break;
-                case 2:
-                    $imgType = "jpg";
-                    break;
-                case 3:
-                    $imgType = "png";
-                    break;
-                default:
-                    $imgType = "png";
-                    break;
-            }
-            // 合成图片的base64编码
-            $base64 = 'data:image/' . $imgType . ';base64,' . $file_content;
-        }
-    
-        return $base64;
     }
 }
