@@ -4,6 +4,7 @@ require '../vendor/autoload.php';
 
 use goleden\convert\Html2pdf;
 use goleden\convert\Word2html;
+use goleden\convert\word;
 
 // try {
 //     $html2pdf = new Html2pdf();
@@ -23,10 +24,24 @@ use goleden\convert\Word2html;
 
 try {
     $html2pdf = new Word2html();
-    $result = $html2pdf->convert('./1.doc', './html/', 30, ['uploadCallback' => function ($data) {
-        return $data;
-    }]);
-    echo $result;
+    // $doc = './lineheight.docx';
+    $doc = './1.doc';
+    // $doc = './b.doc';
+    $file = $html2pdf->convert($doc, realpath('./html/'), 30, [
+        'imageCallback1' => function ($file) {
+            return $file;
+        },
+        'contentCallback' => function (word\ParseContent $parseContent) {
+            $space = new word\Space($parseContent);
+            $htmlContent = $space->getContent();
+        
+            $lineHeight = new word\LineHeight($space);
+            $htmlContent = $lineHeight->getContent();
+            return $htmlContent;
+        }
+    ]);
+    echo $file . "\n";
+
     echo 'success';
 } catch (\Exception $e) {
     echo ('Word2html:' . $e->getMessage());
