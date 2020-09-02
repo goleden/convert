@@ -4,6 +4,7 @@ require '../vendor/autoload.php';
 
 use goleden\convert\Html2pdf;
 use goleden\convert\Word2html;
+use goleden\convert\Word2pdf;
 use goleden\convert\word;
 
 // try {
@@ -21,6 +22,15 @@ use goleden\convert\word;
 // } catch (\Exception $e) {
 //     echo ('Word2html:' . $e->getMessage());
 // }
+try {
+    $html2pdf = new Word2pdf();
+    $path = $html2pdf->convert('./1.doc', './html/');
+    echo $path . "\n";
+    echo 'success' . "\n";
+    exit;
+} catch (\Exception $e) {
+    echo ('Word2html:' . $e->getMessage());
+}
 
 try {
     $html2pdf = new Word2html();
