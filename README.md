@@ -2,6 +2,8 @@
 
 目前支持word转html，word转pdf，html转pdf，pdf转图片，图片转pdf。
 
+已生产使用。
+
 ## 安装
 
 composer require goleden/convert
