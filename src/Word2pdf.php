@@ -31,18 +31,17 @@ class Word2pdf
     /**
      * soffice
      *
-     * @param string $word     html代码块
-     * @param string $htmlPath pdf生成路径
+     * @param string $word     文件
+     * @param string $path     pdf生成路径
      * @param int    $timeout  执行超时时间，单位秒
      *
      * @return string|Exception
      */
-    public function convert($word, $path, $timeout = 30, $options = [])
+    public function convert($word, $path, $timeout = 30)
     {
-        $this->options = $options;
-        $this->path = rtrim($path, '/') . '/' . uniqid();
-        if (!is_dir($this->htmlPath)) {
-            mkdir($this->htmlPath, 0777, true);
+        $path = rtrim($path, '/');
+        if (!is_dir($path)) {
+            mkdir($path, 0777, true);
         }
         $process = new Process(
             [
@@ -52,7 +51,7 @@ class Word2pdf
                 '--convert-to',
                 'pdf',
                 '--outdir',
-                $this->path,
+                $path,
                 realpath($word)
             ]
         );
@@ -64,7 +63,7 @@ class Word2pdf
             throw new ProcessFailedException($process);
         }
 
-        $this->file = $this->path . '/' . pathinfo($word, PATHINFO_FILENAME) . '.pdf';
+        $this->file = $path . '/' . pathinfo($word, PATHINFO_FILENAME) . '.pdf';
 
         return $this->file;
     }
