@@ -16,7 +16,7 @@ Imagick、LibreOffice、wkhtmltopdf
 
 - libreoffice转换，格式会有部分问题。
 
-- pdf大文件，imagick转化较慢，设置会出现内存泄露问题，可以单张转换，已提供convertPage方法。
+- pdf大文件，imagick转化较慢，甚至会出现内存泄露问题，可以单张转换，已提供convertPage方法。
 
 - pdf转图片，需要安装ghostscript
 
