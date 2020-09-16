@@ -22,7 +22,7 @@ Imagick、LibreOffice、wkhtmltopdf
 
 - libreoffice需要安装对应字体
 
-- libreoffice修改临时目录权限，或者设置用户的$HOME目录
+- libreoffice修改临时目录权限，或者设置用户的$HOME目录。如：chown -R www:www /home/www/
 
 
 ## 即将支持
