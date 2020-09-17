@@ -36,7 +36,7 @@ use goleden\convert\word;
 
 try {
     $convert = new Pdf2img();
-    $filename = $convert->convertPage('./p370.pdf', './html/', '1');
+    $filename = $convert->convertPage('./p370.pdf', './html/a.png', '1');
     echo $filename . ' success';
 } catch (\Exception $e) {
     echo ('Word2html:' . $e->getMessage());
