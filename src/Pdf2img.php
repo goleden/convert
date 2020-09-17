@@ -55,7 +55,7 @@ class Pdf2img
      * Pdf2img，转换一页pdf
      *
      * @param string $pdf pdf文件路径
-     * @param string $dir 保存目录
+     * @param string $filename 保存文件名或保存目录
      * @param string $page 页码
      * @param string $resoulution 分辨率
      * @param string $compression 压缩
@@ -63,7 +63,7 @@ class Pdf2img
      *
      * @return string
      */
-    public function convertPage($pdf, $dir, $page = 0, $resoulution = '120', $compression = '100', $format = 'png')
+    public function convertPage($pdf, $filename, $page = 0, $resoulution = '120', $compression = '100', $format = 'png')
     {
         if (!extension_loaded('Imagick')) {
             throw new \Exception('Imagick extension not found!');
@@ -75,11 +75,11 @@ class Pdf2img
         $im->setResolution($resoulution, $resoulution);
         $im->setCompressionQuality($compression);
         $im->readImage($pdf . '[' . $page . ']');
-        if (!is_dir($dir)) {
-            throw new \Exception('Dir not found!');
+        // 如果是目录，则自动生成文件名
+        if (is_dir($filename)) {
+            $filename = rtrim($filename, '/') . '/' . uniqid() . rand(1000, 9999) . '.' . $format;
         }
         $im->setImageFormat($format);
-        $filename = rtrim($dir, '/') . '/' . uniqid() . rand(1000, 9999) . '.' . $format;
         if ($im->writeImage($filename) != true) {
             throw new \Exception('Write image fail!');
         }
